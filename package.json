@@ -1,0 +1,43 @@
+{
+  "name": "viewlist",
+  "version": "1.0.0",
+  "description": "Excel/MDB data analysis and visualization",
+  "main": "out/main/index.js",
+  "type": "module",
+  "author": "ViewList",
+  "license": "MIT",
+  "scripts": {
+    "dev": "electron-vite dev",
+    "build": "electron-vite build",
+    "preview": "electron-vite preview",
+    "rebuild": "electron-rebuild -f -w better-sqlite3",
+    "postinstall": "electron-rebuild -f -w better-sqlite3"
+  },
+  "devDependencies": {
+    "@electron-toolkit/tsconfig": "^1.0.1",
+    "@electron/rebuild": "^3.6.0",
+    "@types/better-sqlite3": "^7.6.8",
+    "@types/node": "^20.11.5",
+    "@types/react": "^18.2.48",
+    "@types/react-dom": "^18.2.18",
+    "@types/uuid": "^9.0.7",
+    "@vitejs/plugin-react": "^4.2.1",
+    "autoprefixer": "^10.4.17",
+    "electron": "^28.2.0",
+    "electron-builder": "^26.8.1",
+    "electron-vite": "^2.0.0",
+    "postcss": "^8.4.33",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5.3.3",
+    "vite": "^5.0.12"
+  },
+  "dependencies": {
+    "@electron-toolkit/utils": "^3.0.0",
+    "better-sqlite3": "^9.4.3",
+    "exceljs": "^4.4.0",
+    "node-adodb": "^5.0.3",
+    "recharts": "^2.12.0",
+    "uuid": "^9.0.1",
+    "zustand": "^4.5.0"
+  }
+}
