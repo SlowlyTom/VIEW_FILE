@@ -33,6 +33,7 @@
   },
   "dependencies": {
     "@electron-toolkit/utils": "^3.0.0",
+    "@tanstack/react-virtual": "^3.13.22",
     "better-sqlite3": "^9.4.3",
     "exceljs": "^4.4.0",
     "node-adodb": "^5.0.3",

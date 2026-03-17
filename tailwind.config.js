@@ -5,11 +5,11 @@ export default {
     extend: {
       colors: {
         primary: '#3b82f6',
-        secondary: '#6b7280',
-        surface: '#1e2130',
-        'surface-2': '#252836',
-        'surface-3': '#2d3148',
-        border: '#374151',
+        secondary: '#64748b',
+        surface: '#f8fafc',
+        'surface-2': '#f1f5f9',
+        'surface-3': '#e2e8f0',
+        border: '#cbd5e1',
         accent: '#818cf8',
       }
     }

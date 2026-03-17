@@ -1,5 +1,8 @@
-import { ipcMain, dialog } from 'electron'
+import { ipcMain, dialog, BrowserWindow } from 'electron'
 import * as ExcelJS from 'exceljs'
+import { createRequire } from 'module'
+
+const _require = createRequire(import.meta.url)
 
 interface ExportColumn {
   name: string
@@ -29,14 +32,23 @@ export function registerExportHandlers(): void {
   ipcMain.handle(
     'export:saveDialog',
     async (_event, defaultPath?: string, filters?: Electron.FileFilter[]) => {
-      const result = await dialog.showSaveDialog({
-        defaultPath,
-        filters: filters || [
-          { name: 'Excel Files', extensions: ['xlsx'] },
-          { name: 'Access Files', extensions: ['mdb'] }
-        ]
-      })
-      return result
+      try
+      {
+        const win = BrowserWindow.getFocusedWindow() ?? BrowserWindow.getAllWindows()[0] ?? undefined
+        const result = await dialog.showSaveDialog(win!, {
+          defaultPath,
+          filters: filters || [
+            { name: 'Excel Files', extensions: ['xlsx'] },
+            { name: 'Access Files', extensions: ['mdb'] }
+          ]
+        })
+        return result
+      }
+      catch (err)
+      {
+        console.error('export:saveDialog error:', err)
+        return { canceled: true, filePath: '' }
+      }
     }
   )
 
@@ -96,7 +108,7 @@ export function registerExportHandlers(): void {
 
   ipcMain.handle('export:mdb', async (_event, config: MdbExportConfig) => {
     try {
-      const ADODB = await import('node-adodb')
+      const ADODB = _require('node-adodb') as typeof import('node-adodb')
       const connection = ADODB.open(
         `Provider=Microsoft.Jet.OLEDB.4.0;Data Source=${config.targetMdbPath};`
       )

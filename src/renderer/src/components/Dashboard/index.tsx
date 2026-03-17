@@ -51,20 +51,27 @@ export function Dashboard() {
     if (data.length === 0)
       return <div className="text-secondary text-sm text-center py-8">데이터 없음</div>
 
-    const props = { data, margin: { top: 5, right: 10, left: -20, bottom: 5 } }
+    const hasRightAxis = config.series.some((s) => s.yAxisId === 'right')
+    const props = { data, margin: { top: 5, right: hasRightAxis ? 30 : 5, left: -20, bottom: 5 } }
     const tooltipStyle = {
-      backgroundColor: '#1e2130',
-      border: '1px solid #374151',
+      backgroundColor: '#ffffff',
+      border: '1px solid #e2e8f0',
       fontSize: 11
     }
+
+    const yAxisLeft = <YAxis yAxisId="left" stroke="#94a3b8" tick={{ fontSize: 9 }} />
+    const yAxisRight = hasRightAxis ? (
+      <YAxis yAxisId="right" orientation="right" stroke="#94a3b8" tick={{ fontSize: 9 }} />
+    ) : null
 
     switch (config.chart_type) {
       case 'line':
         return (
           <LineChart {...props}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-            <XAxis dataKey="x" stroke="#6b7280" tick={{ fontSize: 9 }} />
-            <YAxis stroke="#6b7280" tick={{ fontSize: 9 }} />
+            <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+            <XAxis dataKey="x" stroke="#94a3b8" tick={{ fontSize: 9 }} />
+            {yAxisLeft}
+            {yAxisRight}
             <Tooltip contentStyle={tooltipStyle} />
             {config.series.map((s) => (
               <Line
@@ -74,6 +81,7 @@ export function Dashboard() {
                 stroke={s.color}
                 dot={false}
                 strokeWidth={1.5}
+                yAxisId={s.yAxisId ?? 'left'}
               />
             ))}
           </LineChart>
@@ -81,21 +89,23 @@ export function Dashboard() {
       case 'bar':
         return (
           <BarChart {...props}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-            <XAxis dataKey="x" stroke="#6b7280" tick={{ fontSize: 9 }} />
-            <YAxis stroke="#6b7280" tick={{ fontSize: 9 }} />
+            <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+            <XAxis dataKey="x" stroke="#94a3b8" tick={{ fontSize: 9 }} />
+            {yAxisLeft}
+            {yAxisRight}
             <Tooltip contentStyle={tooltipStyle} />
             {config.series.map((s) => (
-              <Bar key={s.label} dataKey={s.label} fill={s.color} />
+              <Bar key={s.label} dataKey={s.label} fill={s.color} yAxisId={s.yAxisId ?? 'left'} />
             ))}
           </BarChart>
         )
       case 'area':
         return (
           <AreaChart {...props}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-            <XAxis dataKey="x" stroke="#6b7280" tick={{ fontSize: 9 }} />
-            <YAxis stroke="#6b7280" tick={{ fontSize: 9 }} />
+            <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+            <XAxis dataKey="x" stroke="#94a3b8" tick={{ fontSize: 9 }} />
+            {yAxisLeft}
+            {yAxisRight}
             <Tooltip contentStyle={tooltipStyle} />
             {config.series.map((s) => (
               <Area
@@ -105,6 +115,7 @@ export function Dashboard() {
                 stroke={s.color}
                 fill={s.color}
                 fillOpacity={0.2}
+                yAxisId={s.yAxisId ?? 'left'}
               />
             ))}
           </AreaChart>
@@ -120,7 +131,7 @@ export function Dashboard() {
         <input
           value={dashboardName}
           onChange={(e) => setDashboardName(e.target.value)}
-          className="px-3 py-1.5 bg-surface-2 text-white text-lg font-semibold rounded border border-border focus:outline-none focus:border-primary"
+          className="px-3 py-1.5 bg-white text-gray-900 text-lg font-semibold rounded border border-border focus:outline-none focus:border-primary"
         />
         <button
           onClick={handleSaveDashboard}
@@ -151,7 +162,7 @@ export function Dashboard() {
                   className={`px-3 py-1.5 text-sm rounded transition-colors ${
                     selectedCharts.includes(chart.config_id!)
                       ? 'bg-primary text-white'
-                      : 'bg-surface-2 text-secondary border border-border hover:text-white'
+                      : 'bg-white text-secondary border border-border hover:text-gray-900'
                   }`}
                 >
                   {chart.name}
@@ -168,7 +179,7 @@ export function Dashboard() {
                 return (
                   <div key={id} className="bg-surface-2 rounded-lg border border-border p-4">
                     <div className="flex items-center justify-between mb-3">
-                      <h3 className="text-white font-medium">{chart.name}</h3>
+                      <h3 className="text-gray-900 font-medium">{chart.name}</h3>
                       <span className="text-xs text-secondary">{chart.chart_type}</span>
                     </div>
                     <div className="h-48">

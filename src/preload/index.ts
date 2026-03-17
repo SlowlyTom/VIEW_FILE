@@ -4,6 +4,8 @@ const api = {
   // File operations
   openFileDialog: () => ipcRenderer.invoke('file:openDialog'),
   parseFile: (filePath: string) => ipcRenderer.invoke('file:parse', filePath),
+  reparseFile: (fileId: string, filePath: string) =>
+    ipcRenderer.invoke('file:reparse', fileId, filePath),
   getFiles: () => ipcRenderer.invoke('db:getFiles'),
   deleteFile: (fileId: string) => ipcRenderer.invoke('db:deleteFile', fileId),
 

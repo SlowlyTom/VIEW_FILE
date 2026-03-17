@@ -8,3 +8,5 @@ dist/
 resources/icon.icns
 resources/icon.ico
 node_modules
+.claude/
+1234.txt

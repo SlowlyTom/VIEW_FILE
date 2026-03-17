@@ -113,7 +113,7 @@ export function ExportPanel() {
 
   return (
     <div className="flex-1 p-6 bg-surface overflow-y-auto">
-      <h2 className="text-white text-lg font-semibold mb-6">데이터 내보내기</h2>
+      <h2 className="text-gray-900 text-lg font-semibold mb-6">데이터 내보내기</h2>
 
       <div className="grid grid-cols-2 gap-6 max-w-4xl">
         <div>
@@ -126,7 +126,7 @@ export function ExportPanel() {
               className={`px-4 py-2 rounded text-sm transition-colors ${
                 exportType === 'xlsx'
                   ? 'bg-primary text-white'
-                  : 'bg-surface-3 text-secondary border border-border hover:text-white'
+                  : 'bg-white text-secondary border border-border hover:text-gray-900'
               }`}
             >
               📊 Excel (.xlsx)
@@ -136,7 +136,7 @@ export function ExportPanel() {
               className={`px-4 py-2 rounded text-sm transition-colors ${
                 exportType === 'mdb'
                   ? 'bg-primary text-white'
-                  : 'bg-surface-3 text-secondary border border-border hover:text-white'
+                  : 'bg-white text-secondary border border-border hover:text-gray-900'
               }`}
             >
               🗄️ Access (.mdb)
@@ -155,7 +155,7 @@ export function ExportPanel() {
                 className={`px-3 py-2 rounded text-sm transition-colors ${
                   mergeMode === 'separate_sheets'
                     ? 'bg-primary text-white'
-                    : 'bg-surface-3 text-secondary border border-border'
+                    : 'bg-white text-secondary border border-border'
                 }`}
               >
                 시트 분리
@@ -165,7 +165,7 @@ export function ExportPanel() {
                 className={`px-3 py-2 rounded text-sm transition-colors ${
                   mergeMode === 'single_sheet'
                     ? 'bg-primary text-white'
-                    : 'bg-surface-3 text-secondary border border-border'
+                    : 'bg-white text-secondary border border-border'
                 }`}
               >
                 단일 시트
@@ -182,7 +182,7 @@ export function ExportPanel() {
             <input
               value={mdbTableName}
               onChange={(e) => setMdbTableName(e.target.value)}
-              className="px-3 py-1.5 bg-surface-3 text-white text-sm rounded border border-border focus:outline-none focus:border-primary"
+              className="px-3 py-1.5 bg-white text-gray-900 text-sm rounded border border-border focus:outline-none focus:border-primary"
             />
           </div>
         )}
@@ -205,7 +205,7 @@ export function ExportPanel() {
                     onChange={() => toggleDataset(ds.dataset_id)}
                     className="w-4 h-4"
                   />
-                  <span className="text-white font-medium">{ds.display_name}</span>
+                  <span className="text-gray-900 font-medium">{ds.display_name}</span>
                   <span className="text-secondary text-sm">
                     {ds.row_count.toLocaleString()} 행
                   </span>
@@ -222,7 +222,7 @@ export function ExportPanel() {
                           className={`px-2 py-1 text-xs rounded transition-colors ${
                             (selectedColumns[ds.dataset_id] ?? []).includes(col.col_name)
                               ? 'bg-primary text-white'
-                              : 'bg-surface-3 text-secondary border border-border'
+                              : 'bg-white text-secondary border border-border'
                           }`}
                         >
                           {col.display_name}

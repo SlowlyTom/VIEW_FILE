@@ -18,9 +18,9 @@ export function App() {
   const [activeTab, setActiveTab] = useState<Tab>('table')
 
   return (
-    <div className="h-screen flex flex-col bg-surface text-white overflow-hidden">
+    <div className="h-screen flex flex-col bg-surface text-gray-900 overflow-hidden">
       {/* Top bar */}
-      <header className="flex items-center gap-0 bg-surface-2 border-b border-border px-4 h-10 shrink-0">
+      <header className="flex items-center gap-0 bg-white border-b border-border px-4 h-10 shrink-0">
         <span className="text-primary font-bold mr-6 text-sm tracking-wide">ViewList</span>
         {tabs.map((tab) => (
           <button
@@ -28,8 +28,8 @@ export function App() {
             onClick={() => setActiveTab(tab.id)}
             className={`flex items-center gap-1.5 px-4 h-10 text-sm transition-colors border-b-2 ${
               activeTab === tab.id
-                ? 'text-white border-primary'
-                : 'text-secondary border-transparent hover:text-white'
+                ? 'text-gray-900 border-primary'
+                : 'text-secondary border-transparent hover:text-gray-900'
             }`}
           >
             <span>{tab.icon}</span>

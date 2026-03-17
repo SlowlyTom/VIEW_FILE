@@ -1,10 +1,15 @@
-import { ipcMain, dialog } from 'electron'
+import { ipcMain, dialog, BrowserWindow } from 'electron'
 import { getDb } from '../db'
 import * as ExcelJS from 'exceljs'
 import { createHash } from 'crypto'
 import { readFileSync, existsSync } from 'fs'
 import { v4 as uuidv4 } from 'uuid'
 import { basename, extname } from 'path'
+import { createRequire } from 'module'
+
+// node-adodb는 내부에서 require.resolve("./adodb")를 사용하므로
+// Rollup 번들링 시 경로가 깨짐 → createRequire로 런타임 로드
+const _require = createRequire(import.meta.url)
 
 interface ParsedColumn {
   columnId: string
@@ -147,7 +152,7 @@ async function parseExcel(filePath: string, fileId: string): Promise<ParsedDatas
 
 async function parseMdb(filePath: string, fileId: string): Promise<ParsedDataset[]> {
   try {
-    const ADODB = await import('node-adodb')
+    const ADODB = _require('node-adodb') as typeof import('node-adodb')
     const ext = extname(filePath).toLowerCase()
     const provider =
       ext === '.accdb'
@@ -271,16 +276,67 @@ function saveToDb(
 
 export function registerFileHandlers(): void {
   ipcMain.handle('file:openDialog', async () => {
-    const result = await dialog.showOpenDialog({
-      properties: ['openFile', 'multiSelections'],
-      filters: [
-        { name: 'Data Files', extensions: ['xlsx', 'xls', 'mdb', 'accdb'] },
-        { name: 'Excel Files', extensions: ['xlsx', 'xls'] },
-        { name: 'Access Files', extensions: ['mdb', 'accdb'] }
-      ]
-    })
-    return result
+    try
+    {
+      const win = BrowserWindow.getFocusedWindow() ?? BrowserWindow.getAllWindows()[0] ?? undefined
+      const result = await dialog.showOpenDialog(win!, {
+        properties: ['openFile', 'multiSelections'],
+        filters: [
+          { name: 'Data Files', extensions: ['xlsx', 'xls', 'mdb', 'accdb'] },
+          { name: 'Excel Files', extensions: ['xlsx', 'xls'] },
+          { name: 'Access Files', extensions: ['mdb', 'accdb'] }
+        ]
+      })
+      return result
+    }
+    catch (err)
+    {
+      console.error('file:openDialog error:', err)
+      return { canceled: true, filePaths: [] }
+    }
   })
+
+  // 기존 파일 재파싱 — DB 메타데이터의 datasetId를 재사용하여 행 데이터만 반환
+  ipcMain.handle(
+    'file:reparse',
+    async (_event, fileId: string, filePath: string) => {
+      try {
+        if (!existsSync(filePath)) {
+          return { success: false, error: `파일을 찾을 수 없습니다: ${filePath}` }
+        }
+
+        const ext = extname(filePath).toLowerCase()
+        let datasets: ParsedDataset[]
+
+        if (ext === '.xlsx' || ext === '.xls') {
+          datasets = await parseExcel(filePath, fileId)
+        } else if (ext === '.mdb' || ext === '.accdb') {
+          datasets = await parseMdb(filePath, fileId)
+        } else {
+          return { success: false, error: `지원하지 않는 파일 형식: ${ext}` }
+        }
+
+        // 기존 datasetId를 sheet_or_table 이름으로 매핑
+        const db = getDb()
+        const existingDatasets = db
+          .prepare('SELECT dataset_id, sheet_or_table FROM datasets WHERE file_id = ?')
+          .all(fileId) as { dataset_id: string; sheet_or_table: string }[]
+
+        const sheetMap = new Map(
+          existingDatasets.map((d) => [d.sheet_or_table, d.dataset_id])
+        )
+
+        const result = datasets.map((ds) => ({
+          datasetId: sheetMap.get(ds.sheetOrTable) ?? ds.datasetId,
+          rows: ds.rows
+        }))
+
+        return { success: true, datasets: result }
+      } catch (err) {
+        return { success: false, error: (err as Error).message }
+      }
+    }
+  )
 
   ipcMain.handle('file:parse', async (_event, filePath: string) => {
     try {

@@ -8,6 +8,7 @@ export interface SeriesConfig {
   columnName: string
   label: string
   color: string
+  yAxisId?: 'left' | 'right'
 }
 
 export interface XAxisConfig {
@@ -60,7 +61,9 @@ export function useCharts() {
         const seriesLengths = config.series.map(
           (s) => (dataMap.get(s.datasetId) ?? []).length
         )
-        const minLen = Math.min(xRows.length, ...seriesLengths)
+        const minLen = seriesLengths.length > 0
+          ? Math.min(xRows.length, ...seriesLengths)
+          : 0
         return Array.from({ length: minLen }, (_, i) => {
           const point: Record<string, unknown> = {
             x: xRows[i]?.[config.xAxis.columnName]

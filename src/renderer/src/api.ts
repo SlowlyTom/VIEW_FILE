@@ -9,6 +9,14 @@ export interface ViewListAPI {
     datasets?: ParsedDataset[]
     error?: string
   }>
+  reparseFile: (
+    fileId: string,
+    filePath: string
+  ) => Promise<{
+    success: boolean
+    datasets?: { datasetId: string; rows: Record<string, unknown>[] }[]
+    error?: string
+  }>
   getFiles: () => Promise<SourceFileRow[]>
   deleteFile: (fileId: string) => Promise<{ success: boolean }>
 
